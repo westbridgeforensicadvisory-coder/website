@@ -1,0 +1,1777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Westbridge Forensic Advisory</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── Reset & Base ─────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:     #0B1F3A;
+      --navy-mid: #11203A;
+      --gold:     #C9A227;
+      --gold-dim: #B8902E;
+      --burgundy: #5C1A1A;
+      --bg:       #F7F5F0;
+      --bg-dark:  #EDEAE3;
+      --text:     #1A1A1A;
+      --text-mid: #3A3A3A;
+      --text-muted: #666;
+      --white:    #FFFFFF;
+      --serif: 'Playfair Display', Georgia, serif;
+      --sans:  'Inter', 'Helvetica Neue', sans-serif;
+      --max-w: 1180px;
+      --header-h: 72px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--sans);
+      background: var(--bg);
+      color: var(--text);
+      font-size: 16px;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    img { max-width: 100%; display: block; }
+    a { color: inherit; text-decoration: none; }
+
+    .container {
+      width: 100%;
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    /* ─── Scroll Animation ──────────────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+    .reveal-delay-5 { transition-delay: 0.5s; }
+    .reveal-delay-6 { transition-delay: 0.6s; }
+
+    /* ─── Typography ────────────────────────────────── */
+    h1, h2, h3, h4 { font-family: var(--serif); font-weight: 600; line-height: 1.2; }
+
+    .section-label {
+      font-family: var(--sans);
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold);
+      display: block;
+      margin-bottom: 1rem;
+    }
+
+    .section-title {
+      font-size: clamp(1.9rem, 3.5vw, 2.8rem);
+      color: var(--navy);
+      margin-bottom: 1.25rem;
+    }
+
+    .section-title.light { color: var(--white); }
+
+    .section-subtitle {
+      font-size: 1.05rem;
+      color: var(--text-mid);
+      max-width: 640px;
+      line-height: 1.75;
+    }
+
+    .section-subtitle.light { color: rgba(255,255,255,0.75); }
+
+    /* ─── Gold Divider ─────────────────────────────── */
+    .gold-rule {
+      width: 48px;
+      height: 2px;
+      background: var(--gold);
+      margin-bottom: 1.5rem;
+    }
+
+    /* ─── Buttons ──────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.85rem 1.75rem;
+      font-family: var(--sans);
+      font-size: 0.88rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: all 0.22s ease;
+      border: none;
+    }
+
+    .btn-primary {
+      background: var(--gold);
+      color: var(--navy);
+    }
+    .btn-primary:hover {
+      background: var(--gold-dim);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(201,162,39,0.3);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--white);
+      border: 1.5px solid rgba(255,255,255,0.45);
+    }
+    .btn-outline:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+      transform: translateY(-1px);
+    }
+
+    .btn-outline-dark {
+      background: transparent;
+      color: var(--navy);
+      border: 1.5px solid var(--navy);
+    }
+    .btn-outline-dark:hover {
+      background: var(--navy);
+      color: var(--white);
+    }
+
+    /* ─── HEADER ────────────────────────────────────── */
+    #header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      height: var(--header-h);
+      display: flex;
+      align-items: center;
+      transition: background 0.3s, box-shadow 0.3s;
+    }
+
+    #header.scrolled {
+      background: var(--navy);
+      box-shadow: 0 2px 20px rgba(0,0,0,0.35);
+    }
+
+    #header .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+    }
+
+    .logo {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .logo-name {
+      font-family: var(--serif);
+      font-size: 1.18rem;
+      font-weight: 600;
+      color: var(--white);
+      letter-spacing: 0.02em;
+      line-height: 1.15;
+    }
+    .logo-sub {
+      font-size: 0.62rem;
+      font-weight: 400;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    nav { display: flex; align-items: center; gap: 2rem; }
+
+    nav a {
+      font-size: 0.82rem;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.8);
+      transition: color 0.2s;
+      position: relative;
+    }
+    nav a::after {
+      content: '';
+      position: absolute;
+      bottom: -3px; left: 0; right: 0;
+      height: 1px;
+      background: var(--gold);
+      transform: scaleX(0);
+      transition: transform 0.2s;
+      transform-origin: left;
+    }
+    nav a:hover { color: var(--white); }
+    nav a:hover::after { transform: scaleX(1); }
+
+    .nav-cta {
+      padding: 0.55rem 1.25rem;
+      background: var(--gold);
+      color: var(--navy) !important;
+      border-radius: 2px;
+      font-weight: 600 !important;
+      transition: background 0.2s, transform 0.2s !important;
+    }
+    .nav-cta::after { display: none !important; }
+    .nav-cta:hover { background: var(--gold-dim) !important; transform: translateY(-1px); }
+
+    /* Hamburger */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .hamburger span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--white);
+      transition: all 0.25s;
+    }
+    .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    .mobile-nav {
+      display: none;
+      position: fixed;
+      top: var(--header-h);
+      left: 0; right: 0;
+      background: var(--navy);
+      padding: 1.5rem 2rem 2rem;
+      flex-direction: column;
+      gap: 1.25rem;
+      z-index: 99;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+    .mobile-nav.open { display: flex; }
+    .mobile-nav a {
+      font-size: 0.95rem;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.85);
+      transition: color 0.2s;
+    }
+    .mobile-nav a:hover { color: var(--gold); }
+    .mobile-nav .nav-cta {
+      text-align: center;
+      padding: 0.75rem;
+      background: var(--gold);
+      color: var(--navy) !important;
+    }
+
+    /* ─── HERO ──────────────────────────────────────── */
+    #hero {
+      min-height: 100vh;
+      background: var(--navy);
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      padding-top: var(--header-h);
+    }
+
+    /* Geometric background pattern */
+    #hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(201,162,39,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(201,162,39,0.04) 1px, transparent 1px);
+      background-size: 64px 64px;
+    }
+
+    /* Gold accent glow */
+    #hero::after {
+      content: '';
+      position: absolute;
+      top: -20%;
+      right: -10%;
+      width: 700px;
+      height: 700px;
+      background: radial-gradient(circle, rgba(201,162,39,0.07) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      padding: 7rem 0 6rem;
+      max-width: 780px;
+    }
+
+    .hero-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 2rem;
+    }
+    .hero-eyebrow-line {
+      width: 36px;
+      height: 1.5px;
+      background: var(--gold);
+    }
+    .hero-eyebrow-text {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    .hero-title {
+      font-size: clamp(2.6rem, 6vw, 4.4rem);
+      font-weight: 700;
+      color: var(--white);
+      line-height: 1.1;
+      margin-bottom: 1.75rem;
+    }
+    .hero-title em {
+      font-style: italic;
+      color: var(--gold);
+    }
+
+    .hero-sub {
+      font-size: 1.1rem;
+      color: rgba(255,255,255,0.7);
+      line-height: 1.75;
+      max-width: 580px;
+      margin-bottom: 3rem;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .hero-scroll {
+      position: absolute;
+      bottom: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      color: rgba(255,255,255,0.35);
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    .hero-scroll-line {
+      width: 1px;
+      height: 44px;
+      background: linear-gradient(to bottom, rgba(201,162,39,0.6), transparent);
+      animation: scrollPulse 2.2s ease-in-out infinite;
+    }
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 1; }
+    }
+
+    /* ─── ABOUT ─────────────────────────────────────── */
+    #about {
+      padding: 7rem 0;
+      background: var(--bg);
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: start;
+    }
+
+    .about-left {}
+
+    .about-right {
+      padding-top: 0.5rem;
+    }
+
+    .about-body p {
+      color: var(--text-mid);
+      margin-bottom: 1.25rem;
+      font-size: 1.01rem;
+    }
+
+    .about-pillars {
+      margin-top: 2.5rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    .pillar {
+      border-top: 2px solid var(--gold);
+      padding-top: 1rem;
+    }
+    .pillar-title {
+      font-family: var(--serif);
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 0.4rem;
+    }
+    .pillar-body {
+      font-size: 0.83rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* ─── SERVICES ──────────────────────────────────── */
+    #services {
+      padding: 7rem 0;
+      background: var(--navy);
+      position: relative;
+      overflow: hidden;
+    }
+
+    #services::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(201,162,39,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(201,162,39,0.03) 1px, transparent 1px);
+      background-size: 72px 72px;
+    }
+
+    .services-header {
+      text-align: center;
+      max-width: 600px;
+      margin: 0 auto 4rem;
+      position: relative;
+    }
+    .services-header .gold-rule { margin: 0 auto 1.5rem; }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5px;
+      position: relative;
+    }
+
+    .service-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+      padding: 2.5rem 2rem;
+      transition: background 0.25s, border-color 0.25s, transform 0.25s;
+      position: relative;
+    }
+    .service-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 2px;
+      height: 0;
+      background: var(--gold);
+      transition: height 0.3s ease;
+    }
+    .service-card:hover {
+      background: rgba(255,255,255,0.055);
+      border-color: rgba(201,162,39,0.2);
+      transform: translateY(-3px);
+    }
+    .service-card:hover::before { height: 100%; }
+
+    .service-icon {
+      width: 42px;
+      height: 42px;
+      margin-bottom: 1.5rem;
+      color: var(--gold);
+    }
+
+    .service-num {
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      color: rgba(201,162,39,0.5);
+      margin-bottom: 0.75rem;
+    }
+
+    .service-name {
+      font-family: var(--serif);
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 0.75rem;
+      line-height: 1.3;
+    }
+
+    .service-desc {
+      font-size: 0.87rem;
+      color: rgba(255,255,255,0.55);
+      line-height: 1.65;
+    }
+
+    /* ─── APPROACH ──────────────────────────────────── */
+    #approach {
+      padding: 7rem 0;
+      background: var(--bg-dark);
+    }
+
+    .approach-header {
+      max-width: 560px;
+      margin-bottom: 5rem;
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      position: relative;
+    }
+
+    .steps::before {
+      content: '';
+      position: absolute;
+      top: 28px;
+      left: calc(12.5% + 28px);
+      right: calc(12.5% + 28px);
+      height: 1px;
+      background: linear-gradient(to right, var(--gold), rgba(201,162,39,0.2));
+      z-index: 0;
+    }
+
+    .step {
+      padding: 0 1.5rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .step-num-wrap {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1.75rem;
+    }
+
+    .step-circle {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--navy);
+      border: 2px solid var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--serif);
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--gold);
+      flex-shrink: 0;
+    }
+
+    .step-title {
+      font-family: var(--serif);
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 0.6rem;
+    }
+
+    .step-desc {
+      font-size: 0.87rem;
+      color: var(--text-muted);
+      line-height: 1.65;
+    }
+
+    /* ─── FOUNDERS ──────────────────────────────────── */
+    #founders {
+      padding: 7rem 0;
+      background: var(--bg);
+    }
+
+    .founders-header {
+      max-width: 560px;
+      margin-bottom: 4.5rem;
+    }
+
+    .founders-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      margin-bottom: 5rem;
+    }
+
+    .founder-card {
+      background: var(--white);
+      border: 1px solid rgba(0,0,0,0.07);
+      overflow: hidden;
+    }
+
+    .founder-photo {
+      width: 100%;
+      height: 260px;
+      background: var(--navy);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: flex-end;
+    }
+
+    /* Abstract SVG silhouette placeholder */
+    .founder-photo-inner {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(160deg, #0B1F3A 0%, #162d52 60%, #0a1a30 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .founder-photo-inner::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(201,162,39,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(201,162,39,0.04) 1px, transparent 1px);
+      background-size: 32px 32px;
+    }
+
+    .founder-initials {
+      font-family: var(--serif);
+      font-size: 3.5rem;
+      font-weight: 700;
+      color: rgba(201,162,39,0.25);
+      letter-spacing: 0.05em;
+      position: relative;
+      z-index: 1;
+    }
+
+    .founder-gold-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--gold);
+    }
+
+    .founder-body {
+      padding: 2rem;
+    }
+
+    .founder-name {
+      font-family: var(--serif);
+      font-size: 1.45rem;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 0.2rem;
+    }
+
+    .founder-title {
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin-bottom: 1.25rem;
+    }
+
+    .founder-bio {
+      font-size: 0.92rem;
+      color: var(--text-mid);
+      line-height: 1.72;
+      margin-bottom: 1.75rem;
+    }
+
+    .founder-creds {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .cred-badge {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+      padding: 0.6rem 0.75rem;
+      background: #F7F5F0;
+      border-left: 2px solid var(--gold);
+      font-size: 0.8rem;
+      color: var(--text-mid);
+      line-height: 1.45;
+    }
+    .cred-badge strong {
+      color: var(--navy);
+      font-weight: 600;
+    }
+
+    /* Affiliations row */
+    .affiliations {
+      border-top: 1px solid rgba(0,0,0,0.08);
+      padding-top: 3.5rem;
+    }
+
+    .affiliations-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      text-align: center;
+      margin-bottom: 2.25rem;
+    }
+
+    .affiliations-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 2rem;
+    }
+
+    .affil-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+      opacity: 0.55;
+      transition: opacity 0.2s;
+    }
+    .affil-item:hover { opacity: 1; }
+
+    .affil-seal {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 1.5px solid var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.62rem;
+      font-weight: 700;
+      color: var(--navy);
+      background: var(--white);
+      text-align: center;
+      letter-spacing: -0.01em;
+      line-height: 1.2;
+    }
+
+    .affil-name {
+      font-size: 0.68rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+      text-align: center;
+      max-width: 110px;
+      line-height: 1.4;
+    }
+
+    /* ─── INDUSTRIES ────────────────────────────────── */
+    #industries {
+      padding: 7rem 0;
+      background: var(--navy);
+      position: relative;
+      overflow: hidden;
+    }
+    #industries::after {
+      content: '';
+      position: absolute;
+      bottom: -20%;
+      left: -10%;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(201,162,39,0.05) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    .industries-inner {
+      display: grid;
+      grid-template-columns: 1fr 1.6fr;
+      gap: 6rem;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .industry-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .industry-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      font-size: 0.98rem;
+      color: rgba(255,255,255,0.7);
+      transition: color 0.2s, padding-left 0.2s;
+      cursor: default;
+    }
+    .industry-item:first-child { border-top: 1px solid rgba(255,255,255,0.07); }
+    .industry-item:hover {
+      color: var(--white);
+      padding-left: 8px;
+    }
+
+    .industry-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--gold);
+      flex-shrink: 0;
+    }
+
+    /* ─── INSIGHTS ──────────────────────────────────── */
+    #insights {
+      padding: 7rem 0;
+      background: var(--bg-dark);
+    }
+
+    .insights-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 3.5rem;
+      gap: 2rem;
+    }
+
+    .insights-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+
+    .insight-card {
+      background: var(--white);
+      border: 1px solid rgba(0,0,0,0.07);
+      padding: 2.25rem;
+      transition: transform 0.25s, box-shadow 0.25s;
+    }
+    .insight-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(11,31,58,0.1);
+    }
+
+    .insight-tag {
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin-bottom: 0.85rem;
+    }
+
+    .insight-title {
+      font-family: var(--serif);
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--navy);
+      line-height: 1.35;
+      margin-bottom: 1rem;
+    }
+
+    .insight-excerpt {
+      font-size: 0.87rem;
+      color: var(--text-muted);
+      line-height: 1.65;
+      margin-bottom: 1.5rem;
+    }
+
+    .insight-link {
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      color: var(--navy);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: color 0.2s, gap 0.2s;
+    }
+    .insight-link:hover { color: var(--gold-dim); gap: 0.65rem; }
+
+    /* ─── CONTACT ───────────────────────────────────── */
+    #contact {
+      padding: 7rem 0;
+      background: var(--bg);
+    }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.35fr;
+      gap: 6rem;
+      align-items: start;
+    }
+
+    .contact-left {}
+
+    .contact-info {
+      margin-top: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .contact-info-item {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+
+    .contact-info-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--navy);
+      border-radius: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .contact-info-icon svg { width: 16px; height: 16px; color: var(--gold); }
+
+    .contact-info-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.2rem;
+    }
+
+    .contact-info-value {
+      font-size: 0.92rem;
+      color: var(--text-mid);
+    }
+
+    .confidentiality-note {
+      margin-top: 2rem;
+      padding: 1.25rem;
+      background: rgba(11,31,58,0.05);
+      border-left: 2px solid var(--gold);
+      font-size: 0.83rem;
+      color: var(--text-muted);
+      font-style: italic;
+      line-height: 1.6;
+    }
+
+    /* Form */
+    .contact-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .form-group label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      padding: 0.85rem 1rem;
+      background: var(--white);
+      border: 1px solid rgba(0,0,0,0.12);
+      border-radius: 2px;
+      font-family: var(--sans);
+      font-size: 0.92rem;
+      color: var(--text);
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+      -webkit-appearance: none;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(201,162,39,0.12);
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    .form-note {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    .form-submit {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    /* ─── FOOTER ────────────────────────────────────── */
+    footer {
+      background: #07152A;
+      color: rgba(255,255,255,0.6);
+      padding: 4rem 0 2rem;
+    }
+
+    .footer-top {
+      display: grid;
+      grid-template-columns: 1.6fr 1fr 1fr 1fr;
+      gap: 3rem;
+      padding-bottom: 3rem;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      margin-bottom: 2rem;
+    }
+
+    .footer-brand {}
+
+    .footer-logo-name {
+      font-family: var(--serif);
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 0.2rem;
+    }
+    .footer-logo-sub {
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1rem;
+    }
+    .footer-tagline {
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.45);
+      line-height: 1.65;
+      max-width: 260px;
+    }
+
+    .footer-col-title {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.35);
+      margin-bottom: 1.25rem;
+    }
+
+    .footer-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.7rem;
+    }
+    .footer-links a {
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.55);
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--gold); }
+
+    .footer-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .footer-copy {
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.3);
+    }
+
+    .footer-legal {
+      display: flex;
+      gap: 1.5rem;
+    }
+    .footer-legal a {
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.3);
+      transition: color 0.2s;
+    }
+    .footer-legal a:hover { color: rgba(255,255,255,0.6); }
+
+    /* ─── Responsive ────────────────────────────────── */
+    @media (max-width: 1024px) {
+      .about-grid { grid-template-columns: 1fr; gap: 3rem; }
+      .services-grid { grid-template-columns: repeat(2, 1fr); }
+      .steps { grid-template-columns: repeat(2, 1fr); gap: 3rem; }
+      .steps::before { display: none; }
+      .founders-grid { grid-template-columns: 1fr 1fr; gap: 2rem; }
+      .industries-inner { grid-template-columns: 1fr; gap: 3rem; }
+      .contact-grid { grid-template-columns: 1fr; gap: 3.5rem; }
+      .footer-top { grid-template-columns: 1fr 1fr; gap: 2.5rem; }
+    }
+
+    @media (max-width: 768px) {
+      :root { --header-h: 64px; }
+      nav { display: none; }
+      .hamburger { display: flex; }
+
+      .services-grid { grid-template-columns: 1fr; }
+      .steps { grid-template-columns: 1fr; }
+      .founders-grid { grid-template-columns: 1fr; }
+      .insights-grid { grid-template-columns: 1fr; }
+      .insights-header { flex-direction: column; align-items: flex-start; }
+      .form-row { grid-template-columns: 1fr; }
+      .about-pillars { grid-template-columns: 1fr; }
+      .footer-top { grid-template-columns: 1fr; gap: 2rem; }
+      .footer-bottom { flex-direction: column; align-items: flex-start; }
+      .hero-inner { padding: 5rem 0 4rem; }
+    }
+
+    @media (max-width: 480px) {
+      .container { padding: 0 1.25rem; }
+      .hero-actions { flex-direction: column; align-items: flex-start; }
+      .btn { width: 100%; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ─── HEADER ─────────────────────────────────────── -->
+  <header id="header">
+    <div class="container">
+      <a href="#hero" class="logo">
+        <img src="logo.png" alt="Westbridge Forensic Advisory" style="height:62px;width:auto;display:block;" />
+      </a>
+
+      <nav>
+        <a href="#services">Services</a>
+        <a href="#approach">Approach</a>
+        <a href="#founders">Founders</a>
+        <a href="#industries">Industries</a>
+        <a href="#insights">Insights</a>
+        <a href="#contact" class="nav-cta">Contact</a>
+      </nav>
+
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile Nav -->
+  <div class="mobile-nav" id="mobileNav">
+    <a href="#services" class="mobile-link">Services</a>
+    <a href="#approach" class="mobile-link">Approach</a>
+    <a href="#founders" class="mobile-link">Founders</a>
+    <a href="#industries" class="mobile-link">Industries</a>
+    <a href="#insights" class="mobile-link">Insights</a>
+    <a href="#contact" class="nav-cta mobile-link">Schedule a Consultation</a>
+  </div>
+
+  <!-- ─── HERO ────────────────────────────────────────── -->
+  <section id="hero">
+    <div class="container">
+      <div class="hero-inner">
+        <div class="hero-eyebrow reveal">
+          <span class="hero-eyebrow-line"></span>
+          <span class="hero-eyebrow-text">Forensic Accounting &amp; Financial Crime Advisory</span>
+        </div>
+
+        <h1 class="hero-title reveal reveal-delay-1">
+          Clarity<br /><em>Where It<br />Matters Most.</em>
+        </h1>
+
+        <p class="hero-sub reveal reveal-delay-2">
+          Westbridge Forensic Advisory helps companies, counsel, and regulators uncover financial misconduct, trace assets, and build evidence that withstands scrutiny — in court, in arbitration, and before regulators.
+        </p>
+
+        <div class="hero-actions reveal reveal-delay-3">
+          <a href="#contact" class="btn btn-primary">
+            Schedule a Confidential Consultation
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </a>
+          <a href="#services" class="btn btn-outline">Our Services</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-scroll">
+      <div class="hero-scroll-line"></div>
+      <span>Scroll</span>
+    </div>
+  </section>
+
+  <!-- ─── ABOUT ────────────────────────────────────────── -->
+  <section id="about">
+    <div class="container">
+      <div class="about-grid">
+        <div class="about-left reveal">
+          <span class="section-label">Who We Are</span>
+          <div class="gold-rule"></div>
+          <h2 class="section-title">Independent. Rigorous.<br />Court-Ready.</h2>
+
+          <div class="about-pillars">
+            <div class="pillar">
+              <div class="pillar-title">Confidentiality</div>
+              <div class="pillar-body">Every inquiry is handled with the same discretion we expect of counsel.</div>
+            </div>
+            <div class="pillar">
+              <div class="pillar-title">Objectivity</div>
+              <div class="pillar-body">Our findings follow the evidence — not the outcome a client hopes to reach.</div>
+            </div>
+            <div class="pillar">
+              <div class="pillar-title">Rigor</div>
+              <div class="pillar-body">Methodologies designed to hold up under cross-examination and regulatory review.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="about-right about-body reveal reveal-delay-2">
+          <p>
+            Westbridge Forensic Advisory was founded to address a specific gap in the market: the need for a boutique firm that combines deep financial-modeling discipline with genuine investigative expertise — and that operates with the independence and objectivity that litigation and regulatory contexts demand.
+          </p>
+          <p>
+            We work at the intersection of finance, law, and compliance. Our clients engage us when they need answers that cannot be approximate — when the stakes are too high for uncertainty, when the opposing party will challenge every figure, and when the credibility of the analysis matters as much as its conclusions.
+          </p>
+          <p>
+            We are a deliberately small firm. We do not sub-contract our work or dilute it through layers of junior staff. Every engagement is handled by senior practitioners who are accountable for the methodology, the findings, and the testimony it may produce.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── SERVICES ─────────────────────────────────────── -->
+  <section id="services">
+    <div class="container" style="position:relative;">
+      <div class="services-header reveal">
+        <span class="section-label">What We Do</span>
+        <div class="gold-rule"></div>
+        <h2 class="section-title light">Our Service Lines</h2>
+        <p class="section-subtitle light">Rigorous financial investigation and advisory across the spectrum of financial misconduct, compliance, and litigation.</p>
+      </div>
+
+      <div class="services-grid">
+
+        <div class="service-card reveal reveal-delay-1">
+          <div class="service-num">01</div>
+          <div class="service-name">Forensic Accounting &amp; Damages</div>
+          <div class="service-desc">Meticulous reconstruction of financial records and rigorous, court-tested damages quantification for commercial, tort, and contract disputes.</div>
+        </div>
+
+        <div class="service-card reveal reveal-delay-2">
+          <div class="service-num">02</div>
+          <div class="service-name">Fraud Investigation &amp; Asset Recovery</div>
+          <div class="service-desc">Comprehensive fraud examinations tracing misappropriated funds across complex entity structures and multi-jurisdictional accounts.</div>
+        </div>
+
+        <div class="service-card reveal reveal-delay-3">
+          <div class="service-num">03</div>
+          <div class="service-name">Matrimonial &amp; Family Law Support</div>
+          <div class="service-desc">Business valuations, lifestyle analyses, and hidden-asset investigations for high-net-worth divorce matters in New York Supreme Court.</div>
+        </div>
+
+        <div class="service-card reveal reveal-delay-1">
+          <div class="service-num">04</div>
+          <div class="service-name">White Collar Defense Support</div>
+          <div class="service-desc">Expert rebuttal analysis and independent forensic review for securities fraud, AML violations, embezzlement, and federal tax matters.</div>
+        </div>
+
+        <div class="service-card reveal reveal-delay-2">
+          <div class="service-num">05</div>
+          <div class="service-name">Expert Witness &amp; Testimony</div>
+          <div class="service-desc">Credentialed CFEs and financial analysts prepared for deposition and trial testimony — in federal district court, state supreme court, and arbitration.</div>
+        </div>
+
+        <div class="service-card reveal reveal-delay-3">
+          <div class="service-num">06</div>
+          <div class="service-name">AI Validation &amp; Technology Review</div>
+          <div class="service-desc">Independent audits of algorithmic decision-making systems for bias, reliability, and regulatory compliance — a unique capability in forensic practice.</div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── APPROACH ─────────────────────────────────────── -->
+  <section id="approach">
+    <div class="container">
+      <div class="approach-header reveal">
+        <span class="section-label">Our Methodology</span>
+        <div class="gold-rule"></div>
+        <h2 class="section-title">A Disciplined Process.<br />Defensible Results.</h2>
+        <p class="section-subtitle">Every engagement follows a structured, documented methodology — because the process is as important as the conclusion.</p>
+      </div>
+
+      <div class="steps">
+
+        <div class="step reveal reveal-delay-1">
+          <div class="step-num-wrap">
+            <div class="step-circle">01</div>
+          </div>
+          <div class="step-title">Intake &amp; Scoping</div>
+          <div class="step-desc">A confidential initial assessment to define the matter, understand what is at stake, establish the evidentiary standard required, and agree on a precise scope of work.</div>
+        </div>
+
+        <div class="step reveal reveal-delay-2">
+          <div class="step-num-wrap">
+            <div class="step-circle">02</div>
+          </div>
+          <div class="step-title">Investigation &amp; Analysis</div>
+          <div class="step-desc">Forensic review of financial records, transactional data, and documentary evidence. We follow the money — tracing flows, modeling scenarios, and testing hypotheses against the data.</div>
+        </div>
+
+        <div class="step reveal reveal-delay-3">
+          <div class="step-num-wrap">
+            <div class="step-circle">03</div>
+          </div>
+          <div class="step-title">Findings &amp; Reporting</div>
+          <div class="step-desc">Clear, structured reporting calibrated to the audience — whether legal counsel, a board, a regulator, or a court. Every conclusion is traceable to its evidentiary basis.</div>
+        </div>
+
+        <div class="step reveal reveal-delay-4">
+          <div class="step-num-wrap">
+            <div class="step-circle">04</div>
+          </div>
+          <div class="step-title">Resolution Support</div>
+          <div class="step-desc">Expert testimony, regulatory presentation support, or assistance in negotiation and settlement — we remain available through the full resolution of the matter.</div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── FOUNDERS ─────────────────────────────────────── -->
+  <section id="founders">
+    <div class="container">
+      <div class="founders-header reveal">
+        <span class="section-label">The Firm</span>
+        <div class="gold-rule"></div>
+        <h2 class="section-title">Founders &amp; Credentials</h2>
+        <p class="section-subtitle">Senior practitioners with complementary expertise across financial analysis, fraud examination, and AML compliance.</p>
+      </div>
+
+      <div class="founders-grid">
+
+        <!-- Founder 1: Bobocholov — CFE, CAMS -->
+        <div class="founder-card reveal reveal-delay-1">
+          <div class="founder-photo">
+            <div class="founder-photo-inner">
+              <div class="founder-initials">BB</div>
+            </div>
+            <div class="founder-gold-bar"></div>
+          </div>
+          <div class="founder-body">
+            <div class="founder-name">Bahriddin Bobocholov</div>
+            <div class="founder-title">Founder</div>
+            <p class="founder-bio">
+              Bahriddin Bobocholov leads Westbridge's investigative practice, bringing certified expertise in fraud examination and anti-money laundering compliance. He specializes in the forensic tracing of illicit financial flows, the assessment of AML program deficiencies, and the construction of evidence packages suitable for use in litigation and regulatory proceedings. His work spans financial institutions, corporate fraud matters, and cross-border asset recovery — where precision in documentation and clarity under cross-examination are not optional.
+            </p>
+            <div class="founder-creds">
+              <div class="cred-badge">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:1px;color:#C9A227"><polyline points="20 6 9 17 4 12"/></svg>
+                <div><strong>CFE</strong> — Certified Fraud Examiner<br /><span style="font-size:0.75rem;color:#888">Association of Certified Fraud Examiners (ACFE)</span></div>
+              </div>
+              <div class="cred-badge">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:1px;color:#C9A227"><polyline points="20 6 9 17 4 12"/></svg>
+                <div><strong>CAMS</strong> — Certified Anti-Money Laundering Specialist<br /><span style="font-size:0.75rem;color:#888">ACAMS</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Founder 2: Kulboev — MBA BU, FMVA -->
+        <div class="founder-card reveal reveal-delay-2">
+          <div class="founder-photo">
+            <div class="founder-photo-inner">
+              <div class="founder-initials">FK</div>
+            </div>
+            <div class="founder-gold-bar"></div>
+          </div>
+          <div class="founder-body">
+            <div class="founder-name">Fazliddin Kulboev</div>
+            <div class="founder-title">Co-Founder &amp; Head of Financial Analysis</div>
+            <p class="founder-bio">
+              Fazliddin Kulboev leads Westbridge's financial modeling and valuation practice, bringing graduate-level training in management science from Boston University's Questrom School of Business alongside professional certification in financial modeling and valuation analysis. He provides the analytical architecture behind the firm's damages quantification, transaction-focused diligence, and financial model stress-testing — translating complex financial structures into clear, defensible conclusions for legal, regulatory, and board audiences. Together with Abbos, he ensures that Westbridge's work is grounded in both investigative rigor and financial precision.
+            </p>
+            <div class="founder-creds">
+              <div class="cred-badge">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:1px;color:#C9A227"><polyline points="20 6 9 17 4 12"/></svg>
+                <div><strong>MBA, Management Science</strong> — Boston University<br /><span style="font-size:0.75rem;color:#888">Questrom School of Business, 2025</span></div>
+              </div>
+              <div class="cred-badge">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:1px;color:#C9A227"><polyline points="20 6 9 17 4 12"/></svg>
+                <div><strong>FMVA®</strong> — Financial Modeling &amp; Valuation Analyst<br /><span style="font-size:0.75rem;color:#888">Corporate Finance Institute (CFI)</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Affiliations -->
+      <div class="affiliations reveal">
+        <div class="affiliations-label">Credentials &amp; Affiliations</div>
+        <div class="affiliations-row">
+
+          <div class="affil-item">
+            <div class="affil-seal">ACFE</div>
+            <div class="affil-name">Association of Certified Fraud Examiners</div>
+          </div>
+
+          <div class="affil-item">
+            <div class="affil-seal">ACAMS</div>
+            <div class="affil-name">ACAMS</div>
+          </div>
+
+          <div class="affil-item">
+            <div class="affil-seal">CFI</div>
+            <div class="affil-name">Corporate Finance Institute</div>
+          </div>
+
+          <div class="affil-item">
+            <div class="affil-seal" style="font-size:0.55rem;">B·U</div>
+            <div class="affil-name">Boston University Questrom</div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ─── INDUSTRIES ───────────────────────────────────── -->
+  <section id="industries">
+    <div class="container">
+      <div class="industries-inner">
+
+        <div class="reveal">
+          <span class="section-label">Sectors We Serve</span>
+          <div class="gold-rule"></div>
+          <h2 class="section-title light">Industries Served</h2>
+          <p class="section-subtitle light">Financial misconduct does not respect sector boundaries. Neither do we.</p>
+        </div>
+
+        <ul class="industry-list reveal reveal-delay-2">
+          <li class="industry-item"><span class="industry-dot"></span>Financial Services &amp; Banking</li>
+          <li class="industry-item"><span class="industry-dot"></span>Private Equity &amp; Investment Funds</li>
+          <li class="industry-item"><span class="industry-dot"></span>Corporate &amp; Legal Counsel</li>
+          <li class="industry-item"><span class="industry-dot"></span>Government &amp; Regulatory Bodies</li>
+          <li class="industry-item"><span class="industry-dot"></span>Real Estate &amp; Construction</li>
+          <li class="industry-item"><span class="industry-dot"></span>Technology &amp; Startups</li>
+        </ul>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── INSIGHTS ─────────────────────────────────────── -->
+  <section id="insights">
+    <div class="container">
+      <div class="insights-header">
+        <div class="reveal">
+          <span class="section-label">Perspectives</span>
+          <div class="gold-rule"></div>
+          <h2 class="section-title">Insights &amp; Thinking</h2>
+        </div>
+        <div class="reveal reveal-delay-2">
+          <a href="#" class="btn btn-outline-dark">All Articles</a>
+        </div>
+      </div>
+
+      <div class="insights-grid">
+
+        <div class="insight-card reveal reveal-delay-1">
+          <div class="insight-tag">Fraud Investigation</div>
+          <div class="insight-title">Red Flags in Vendor Fraud Schemes: What the Ledger Doesn't Show</div>
+          <div class="insight-excerpt">Vendor fraud rarely announces itself. The indicators are often in the patterns no one thought to look for — until they become losses that require explanation.</div>
+          <a href="#" class="insight-link">
+            Read more
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </a>
+        </div>
+
+        <div class="insight-card reveal reveal-delay-2">
+          <div class="insight-tag">AML &amp; Compliance</div>
+          <div class="insight-title">What AML Due Diligence Should Actually Look Like in 2025</div>
+          <div class="insight-excerpt">Checkbox compliance and name-screening are no longer sufficient. We examine what rigorous AML diligence demands — and why the gap between policy and practice remains a liability.</div>
+          <a href="#" class="insight-link">
+            Read more
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </a>
+        </div>
+
+        <div class="insight-card reveal reveal-delay-3">
+          <div class="insight-tag">Litigation Support</div>
+          <div class="insight-title">The Difference Between a Financial Report and Defensible Expert Evidence</div>
+          <div class="insight-excerpt">Not every financial analysis survives a Daubert challenge. The distinction between analysis prepared for management and analysis prepared for court is consequential — and often missed.</div>
+          <a href="#" class="insight-link">
+            Read more
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── CONTACT ──────────────────────────────────────── -->
+  <section id="contact">
+    <div class="container">
+      <div class="contact-grid">
+
+        <div class="contact-left reveal">
+          <span class="section-label">Get In Touch</span>
+          <div class="gold-rule"></div>
+          <h2 class="section-title">Schedule a Confidential Consultation</h2>
+          <p class="section-subtitle" style="margin-top:0.5rem;">We are available to counsel, financial institutions, and organizations with matters requiring independent forensic advisory support.</p>
+
+          <div class="contact-info">
+
+            <div class="contact-info-item">
+              <div class="contact-info-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              </div>
+              <div>
+                <div class="contact-info-label">Email</div>
+                <div class="contact-info-value">intake@westbridgeforensic.com</div>
+              </div>
+            </div>
+
+            <div class="contact-info-item">
+              <div class="contact-info-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.67A2 2 0 012.18 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 8.15a16 16 0 006.94 6.94l1.51-1.51a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+              </div>
+              <div>
+                <div class="contact-info-label">Phone</div>
+                <div class="contact-info-value">(347) 433-8664</div>
+              </div>
+            </div>
+
+            <div class="contact-info-item">
+              <div class="contact-info-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              </div>
+              <div>
+                <div class="contact-info-label">Office</div>
+                <div class="contact-info-value">New York, NY 10007</div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="confidentiality-note">
+            All inquiries are treated as strictly confidential. Initial consultations are conducted under privilege where counsel is involved.
+          </div>
+        </div>
+
+        <div class="contact-right reveal reveal-delay-2">
+          <form class="contact-form" onsubmit="handleSubmit(event)">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" name="name" placeholder="Your name" required />
+              </div>
+              <div class="form-group">
+                <label for="company">Organization</label>
+                <input type="text" id="company" name="company" placeholder="Firm or company" />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" placeholder="your@email.com" required />
+              </div>
+              <div class="form-group">
+                <label for="role">Your Role</label>
+                <select id="role" name="role">
+                  <option value="" disabled selected>Select…</option>
+                  <option>Attorney / Counsel</option>
+                  <option>Corporate Executive</option>
+                  <option>Compliance Officer</option>
+                  <option>Regulator / Government</option>
+                  <option>Financial Institution</option>
+                  <option>Other</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="service">Service Area</label>
+              <select id="service" name="service">
+                <option value="" disabled selected>Select a service area…</option>
+                <option>Forensic Accounting &amp; Fraud Investigation</option>
+                <option>AML &amp; Compliance Advisory</option>
+                <option>Asset Tracing &amp; Recovery</option>
+                <option>Litigation Support &amp; Expert Testimony</option>
+                <option>Financial Due Diligence</option>
+                <option>Risk Assessment &amp; Internal Controls</option>
+                <option>Not sure — need to discuss</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="matter">Brief Description of Matter</label>
+              <textarea id="matter" name="matter" placeholder="Please describe your matter briefly. All information shared is treated as strictly confidential."></textarea>
+            </div>
+
+            <div class="form-submit">
+              <p class="form-note">&#128274;&nbsp; Strictly confidential. No unsolicited distribution.</p>
+              <button type="submit" class="btn btn-primary">
+                Submit Inquiry
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              </button>
+            </div>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── FOOTER ───────────────────────────────────────── -->
+  <footer>
+    <div class="container">
+      <div class="footer-top">
+
+        <div class="footer-brand">
+          <div class="footer-logo-name">Westbridge</div>
+          <div class="footer-logo-sub">Forensic Advisory</div>
+          <div class="footer-tagline">Forensic precision and financial advisory for organizations that require answers they can rely on — in court, before regulators, and in the boardroom.</div>
+        </div>
+
+        <div>
+          <div class="footer-col-title">Services</div>
+          <ul class="footer-links">
+            <li><a href="#services">Forensic Accounting</a></li>
+            <li><a href="#services">AML &amp; Compliance</a></li>
+            <li><a href="#services">Asset Tracing</a></li>
+            <li><a href="#services">Litigation Support</a></li>
+            <li><a href="#services">Due Diligence</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="footer-col-title">Firm</div>
+          <ul class="footer-links">
+            <li><a href="#about">About</a></li>
+            <li><a href="#approach">Approach</a></li>
+            <li><a href="#founders">Founders</a></li>
+            <li><a href="#industries">Industries</a></li>
+            <li><a href="#insights">Insights</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="footer-col-title">Contact</div>
+          <ul class="footer-links">
+            <li><a href="#contact">Schedule a Consultation</a></li>
+            <li><a href="mailto:intake@westbridgeforensic.com">intake@<br/>westbridgeforensic.com</a></li>
+            <li><a href="#">New York, NY</a></li>
+          </ul>
+        </div>
+
+      </div>
+
+      <div class="footer-bottom">
+        <div class="footer-copy">
+          &copy; 2025 Westbridge Forensic Advisory LLC. All rights reserved.
+        </div>
+        <div class="footer-legal">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Engagement</a>
+          <a href="#">Confidentiality</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ─── Scripts ──────────────────────────────────────── -->
+  <script>
+    // Sticky header
+    const header = document.getElementById('header');
+    window.addEventListener('scroll', () => {
+      header.classList.toggle('scrolled', window.scrollY > 40);
+    });
+
+    // Mobile hamburger
+    const hamburger = document.getElementById('hamburger');
+    const mobileNav = document.getElementById('mobileNav');
+    hamburger.addEventListener('click', () => {
+      hamburger.classList.toggle('open');
+      mobileNav.classList.toggle('open');
+    });
+
+    // Close mobile nav on link click
+    document.querySelectorAll('.mobile-link').forEach(link => {
+      link.addEventListener('click', () => {
+        hamburger.classList.remove('open');
+        mobileNav.classList.remove('open');
+      });
+    });
+
+    // Scroll reveal
+    const reveals = document.querySelectorAll('.reveal');
+    const revealObs = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.12 });
+
+    reveals.forEach(el => revealObs.observe(el));
+
+    // Hero elements visible immediately
+    document.querySelectorAll('#hero .reveal').forEach(el => el.classList.add('visible'));
+
+    // Form submit placeholder
+    function handleSubmit(e) {
+      e.preventDefault();
+      const btn = e.target.querySelector('[type=submit]');
+      btn.textContent = 'Inquiry Sent';
+      btn.style.background = '#3a7d44';
+      btn.style.color = '#fff';
+      btn.disabled = true;
+      setTimeout(() => {
+        btn.textContent = 'Submit Inquiry';
+        btn.style.background = '';
+        btn.style.color = '';
+        btn.disabled = false;
+        e.target.reset();
+      }, 4000);
+    }
+  </script>
+
+</body>
+</html>
